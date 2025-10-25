@@ -1,0 +1,26 @@
+- name: Install and configure PostgreSQL
+  hosts: web
+  become: true
+  tasks:
+    - name: Install PostgreSQL
+      apt:
+        name: postgresql
+        state: present
+        update_cache: true
+
+    - name: Start PostgreSQL
+      service:
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: Create user and seed data
+      postgresql_db:
+        name: internship_pg
+        state: present
+
+    - name: Create sample table
+      postgresql_query:
+        db: internship_pg
+        query: "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT);"
+

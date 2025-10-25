@@ -1,0 +1,20 @@
+- name: Install Docker and initialize Swarm
+  hosts: web
+  become: true
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
+
+    - name: Start Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Initialize Docker Swarm
+      shell: docker swarm init
+      ignore_errors: true
+

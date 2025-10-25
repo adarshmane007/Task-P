@@ -1,0 +1,26 @@
+- name: Install and configure MySQL
+  hosts: web
+  become: true
+  tasks:
+    - name: Install MySQL
+      apt:
+        name: mysql-server
+        state: present
+        update_cache: true
+
+    - name: Start MySQL
+      service:
+        name: mysql
+        state: started
+        enabled: true
+
+    - name: Create user and seed data
+      mysql_db:
+        name: internship_db
+        state: present
+
+    - name: Create sample table
+      mysql_query:
+        login_user: root
+        query: "CREATE TABLE IF NOT EXISTS internship_db.users (id INT, name VARCHAR(50));"
+
