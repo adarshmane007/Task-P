@@ -8,19 +8,58 @@
         state: present
         update_cache: true
 
+    - name: Install Python MySQL dependencies
+      apt:
+        name: python3-pymysql
+        state: present
+
     - name: Start MySQL
       service:
         name: mysql
         state: started
         enabled: true
 
-    - name: Create user and seed data
+    - name: Create MySQL user for Ansible access
+      mysql_user:
+        name: ansible_admin
+        password: ansiblepass
+        priv: '*.*:ALL,GRANT'
+        host: '%'
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create internship_db
       mysql_db:
         name: internship_db
         state: present
+        login_user: ansible_admin
+        login_password: ansiblepass
 
-    - name: Create sample table
+    - name: Create intern_user and grant privileges
+      mysql_user:
+        name: intern_user
+        password: intern_pass
+        priv: 'internship_db.*:ALL'
+        host: localhost
+        state: present
+        login_user: ansible_admin
+        login_password: ansiblepass
+
+    - name: Create users table
       mysql_query:
-        login_user: root
-        query: "CREATE TABLE IF NOT EXISTS internship_db.users (id INT, name VARCHAR(50));"
+        login_user: ansible_admin
+        login_password: ansiblepass
+        query: "CREATE TABLE IF NOT EXISTS internship_db.users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50));"
+
+    - name: Insert sample data - Adarsh
+      mysql_query:
+        login_user: ansible_admin
+        login_password: ansiblepass
+        query: "INSERT INTO internship_db.users (name) VALUES ('Adarsh');"
+
+    - name: Insert sample data - Pearl Thought
+      mysql_query:
+        login_user: ansible_admin
+        login_password: ansiblepass
+        query: "INSERT INTO internship_db.users (name) VALUES ('Pearl Thought');"
 

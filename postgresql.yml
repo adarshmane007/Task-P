@@ -8,19 +8,29 @@
         state: present
         update_cache: true
 
+    - name: Install Python PostgreSQL dependencies
+      apt:
+        name: python3-psycopg2
+        state: present
+
     - name: Start PostgreSQL
       service:
         name: postgresql
         state: started
         enabled: true
 
-    - name: Create user and seed data
-      postgresql_db:
-        name: internship_pg
-        state: present
+    - name: Create internship_pg database
+      shell: sudo -u postgres createdb internship_pg
 
-    - name: Create sample table
-      postgresql_query:
-        db: internship_pg
-        query: "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT);"
+    - name: Create intern_user with privileges
+      shell: sudo -u postgres psql -c "CREATE USER intern_user WITH PASSWORD 'intern_pass'; GRANT ALL PRIVILEGES ON DATABASE internship_pg TO intern_user;"
+
+    - name: Create users table
+      shell: sudo -u postgres psql -d internship_pg -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT);"
+
+    - name: Insert sample data - Adarsh
+      shell: sudo -u postgres psql -d internship_pg -c "INSERT INTO users (name) VALUES ('Adarsh');"
+
+    - name: Insert sample data - Pearl Thought
+      shell: sudo -u postgres psql -d internship_pg -c "INSERT INTO users (name) VALUES ('Pearl Thought');"
 
