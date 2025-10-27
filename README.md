@@ -114,6 +114,9 @@ chmod 640 "$LOGFILE"
 ### 🖼️ Screenshot 4: Playbooks View
 ![Playbooks View](screenshots/playbooks_view.jpg)
 
+### Nginx and Docker Swarm Status
+![Nginx and Docker Status](screenshots/nginx-docker-status.jpg)
+
 
 ---
 
